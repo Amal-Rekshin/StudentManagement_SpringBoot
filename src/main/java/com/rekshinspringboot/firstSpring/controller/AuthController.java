@@ -59,6 +59,8 @@ public class AuthController {
 			roles.add(role);
 		}	
 		person.setRoles(roles);
+		
+		personRepository.save(person);
 	
 		return ResponseEntity.ok("User Register Successfully");
 	}
