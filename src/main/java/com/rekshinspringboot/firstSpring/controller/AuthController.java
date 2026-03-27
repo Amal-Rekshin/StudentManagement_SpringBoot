@@ -1,6 +1,7 @@
 package com.rekshinspringboot.firstSpring.controller;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
@@ -39,12 +40,44 @@ public class AuthController {
 		this.passwordEncoder = passwordEncoder;
 	}
 	
+	
+	
+//	@PostMapping("/register")
+//	public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest){
+//
+//	    if(personRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
+//	        return ResponseEntity.badRequest().body(
+//	            Map.of("message", "Username already taken")
+//	        );
+//	    }
+//
+//	    Person person = new Person();
+//	    person.setUsername(registerRequest.getUsername());
+//	    person.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+//
+//	    Set<Role> roles = new HashSet<>();
+//	    for(String roleName : registerRequest.getRoles()) {
+//	        Role role = roleRepository.findByName(roleName)
+//	            .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+//	        roles.add(role);
+//	    }
+//
+//	    person.setRoles(roles);
+//	    personRepository.save(person);
+//
+//	    return ResponseEntity.ok(
+//	        Map.of("message", "User registered successfully")
+//	    );
+//	}
+	
 
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest){
 		if(personRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
 			return ResponseEntity.badRequest().body("User Already Taken");
 		}
+		
+		System.out.println("Successfully registered");
 		
 		Person person = new Person();
 		person.setUsername(registerRequest.getUsername());
@@ -54,10 +87,14 @@ public class AuthController {
 		System.out.println("Encode Password: " + encodePassword);
 		
 		Set<Role> roles = new HashSet<>();
-		for(String roleName : registerRequest.getRoles()) {
-			Role role = roleRepository.findByName(roleName).orElseThrow(() -> new RuntimeException("User Role Not found: " + roleName));
-			roles.add(role);
-		}	
+
+		if(registerRequest.getRoles() != null) {
+		    for(String roleName : registerRequest.getRoles()) {
+		        Role role = roleRepository.findByName(roleName)
+		            .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+		        roles.add(role);
+		    }
+		}
 		person.setRoles(roles);
 		
 		personRepository.save(person);
@@ -66,16 +103,20 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody Person loginRequest){
-		try {
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-		}
-		catch(Exception e) {
-			System.out.println("Exception: "+e);
-		}
-		
-		String token = jwtUtil.generateToken(loginRequest.getUsername());
-		return ResponseEntity.ok(token);
+	public ResponseEntity<?> login(@RequestBody Person loginRequest){
+	    try {
+	        authenticationManager.authenticate(
+	            new UsernamePasswordAuthenticationToken(
+	                loginRequest.getUsername(),
+	                loginRequest.getPassword()
+	            )
+	        );
+	    } catch (Exception e) {
+	        return ResponseEntity.status(401).body("Invalid username or password");
+	    }
+
+	    String token = jwtUtil.generateToken(loginRequest.getUsername());
+	    return ResponseEntity.ok(token);
 	}
 	
 }
