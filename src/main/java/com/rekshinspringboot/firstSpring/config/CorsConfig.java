@@ -38,7 +38,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://stumanagefrontend.netlify.app/")
+                        .allowedOrigins("https://stumanagefrontend.netlify.app")
                         .allowedMethods("*");
             }
         };
