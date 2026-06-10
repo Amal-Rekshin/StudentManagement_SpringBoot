@@ -38,7 +38,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://studentmanagement-springboot-1.onrender.com")
+                        .allowedOrigins("https://stumanagefrontend.netlify.app/")
                         .allowedMethods("*");
             }
         };
