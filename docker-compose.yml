@@ -1,32 +1,38 @@
 services:
-  mysql:
-    image: mysql:8
+
+  mysql-container:
+    image: mysql:8.0
     container_name: mysql-container
+
+    command: --default-authentication-plugin=mysql_native_password
+
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: studentdb
+      MYSQL_ROOT_PASSWORD: 2805
+      MYSQL_DATABASE: student
+      MYSQL_ROOT_HOST: "%"
+
     ports:
       - "3307:3306"
+
     volumes:
       - mysql-data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
-  app:
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p2805"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  springboot-app:
     build: .
     container_name: springboot-app
+
     ports:
       - "8080:8080"
+
     depends_on:
-      mysql:
+      mysql-container:
         condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/studentdb
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
 
 volumes:
   mysql-data:
