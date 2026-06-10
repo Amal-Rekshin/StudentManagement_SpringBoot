@@ -23,7 +23,7 @@ import com.rekshinspringboot.firstSpring.service.UserService;
 
 import lombok.AllArgsConstructor;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://studentmanagement-springboot-1.onrender.com")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/users")
